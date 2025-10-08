@@ -832,12 +832,12 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontStyle: 'italic',
     },
-    // sectionSubtitle: {
-    //     fontSize: 16,
-    //     fontWeight: '600',
-    //     color: '#fff',
-    //     marginBottom: 10,
-    // },
+    sectionSubtitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 10,
+    },
     // mediaGeralCard: {
     //     backgroundColor: '#000',
     //     padding: 20,
