@@ -97,14 +97,14 @@ export class RelatorioService {
           quantidadePedidos: pedidos.length,
         },
         movimentacoes: movimentacoes.map(m => ({
-          data: m.criadoEm,
+          data: m.createdAt,
           tipo: m.tipo,
           descricao: m.descricao,
           valor: m.valor,
           categoria: m.categoria,
         })),
         vendas: pedidos.map(p => ({
-          data: p.criadoEm,
+          data: p.createdAt,
           pedido: p.numero,
           total: p.total,
           itens: p.itens.length,
@@ -168,7 +168,7 @@ export class RelatorioService {
   private static calcularDiasTrabalhados(email: string, pedidos: any[], dataInicio: Date, dataFim: Date): number {
     const pedidosUsuario = pedidos.filter(p => p.criadoPor === email);
     const diasUnicos = new Set(
-      pedidosUsuario.map(p => new Date(p.criadoEm).toDateString())
+      pedidosUsuario.map(p => new Date(p.createdAt).toDateString())
     );
     return diasUnicos.size;
   }

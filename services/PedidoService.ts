@@ -22,7 +22,7 @@ export interface Pedido {
   total: number;
   status: 'pendente' | 'preparando' | 'pronto' | 'entregue';
   cliente?: string;
-  criadoEm: string;
+  createdAt: string;
   criadoPor: string;
 }
 
@@ -30,7 +30,7 @@ export class PedidoService {
   static async getPedidos(): Promise<Pedido[]> {
     try {
       const pedidosRef = ref(database, 'pedidos');
-      const pedidosQuery = query(pedidosRef, orderByChild('criadoEm'));
+      const pedidosQuery = query(pedidosRef, orderByChild('createdAt'));
       const snapshot = await get(pedidosQuery);
       const pedidosData = snapshot.val() || {};
       
@@ -85,7 +85,7 @@ export class PedidoService {
       const pedidosRef = ref(database, 'pedidos');
       const pedidosQuery = query(
         pedidosRef,
-        orderByChild('criadoEm'),
+        orderByChild('createdAt'),
         startAt(inicioISO),
         endAt(fimISO)
       );

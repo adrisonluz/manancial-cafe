@@ -18,7 +18,7 @@ export class AvaliacaoService {
   static async getAvaliacoes(): Promise<Avaliacao[]> {
     try {
       const avaliacoesRef = ref(database, 'avaliacoes');
-      const avaliacoesQuery = query(avaliacoesRef, orderByChild('criadoEm'));
+      const avaliacoesQuery = query(avaliacoesRef, orderByChild('createdAt'));
       const snapshot = await get(avaliacoesQuery);
       
       const avaliacoesData = snapshot.val() || {};

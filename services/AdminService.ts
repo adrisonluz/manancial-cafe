@@ -9,7 +9,7 @@ export interface Usuario {
   role: 'admin' | 'operador' | 'cozinheiro';
   ativo: boolean;
   ultimoAcesso?: string;
-  criadoEm: string;
+  createdAt: string;
 }
 
 export interface ConfiguracaoApp {
@@ -59,7 +59,7 @@ export class AdminService {
         nome: dadosUsuario.nome,
         role: dadosUsuario.role,
         ativo: true,
-        criadoEm: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
 
       const userRef = ref(database, `usuarios/${userId}`);
@@ -155,7 +155,7 @@ export class AdminService {
       const backupRef = ref(database, `backups/${backupId}`);
       await set(backupRef, {
         dados,
-        criadoEm: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       });
     } catch (error) {
       console.error('Erro ao criar backup:', error);
@@ -179,7 +179,7 @@ export class AdminService {
 
       const pedidosAntigos = Object.keys(pedidosData).filter(key => {
         const pedido = pedidosData[key];
-        return new Date(pedido.criadoEm) < dataLimite;
+        return new Date(pedido.createdAt) < dataLimite;
       });
 
       // Remover pedidos antigos

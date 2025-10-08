@@ -8,7 +8,7 @@ export interface MovimentoCaixa {
   categoria: 'venda' | 'suprimento' | 'retirada' | 'despesa' | 'outros';
   valor: number;
   descricao: string;
-  criadoEm: string;
+  createdAt: string;
   criadoPor: string;
 }
 
@@ -119,20 +119,20 @@ export class CaixaService {
           id,
           ...movimentosData[id]
         }))
-        .sort((a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime());
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } catch (error) {
       console.error('Erro ao buscar movimentos:', error);
       return [];
     }
   }
 
-  static async adicionarMovimento(movimento: Omit<MovimentoCaixa, 'id' | 'criadoEm'>): Promise<MovimentoCaixa> {
+  static async adicionarMovimento(movimento: Omit<MovimentoCaixa, 'id' | 'createdAt'>): Promise<MovimentoCaixa> {
     try {
       const movimentosRef = ref(database, 'movimentosCaixa');
       const movimentoRef = push(movimentosRef);
       const novoMovimento = {
         ...movimento,
-        criadoEm: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
 
       await set(movimentoRef, novoMovimento);

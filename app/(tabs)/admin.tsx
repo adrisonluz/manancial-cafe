@@ -13,6 +13,7 @@ import {
 import { Users, Settings, Database, Download, Upload, Shield, X, Plus, CreditCard as Edit, Trash2 } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { AdminService } from '@/services/AdminService';
+import { styles } from '../styles';
 
 interface Usuario {
   id: string;
@@ -21,7 +22,7 @@ interface Usuario {
   role: 'admin' | 'operador' | 'cozinheiro';
   ativo: boolean;
   ultimoAcesso?: string;
-  criadoEm: string;
+  createdAt: string;
 }
 
 interface ConfiguracaoApp {
@@ -288,7 +289,7 @@ export default function AdminScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitleContainer}>
-              <Users size={20} color="#3B82F6" />
+              <Users size={20} color="#9f795c" />
               <Text style={styles.sectionTitle}>Usuários</Text>
             </View>
             <TouchableOpacity
@@ -300,14 +301,14 @@ export default function AdminScreen() {
           </View>
 
           {usuarios.map((usuario) => (
-            <View key={usuario.id} style={styles.usuarioCard}>
-              <View style={styles.usuarioInfo}>
-                <Text style={styles.usuarioNome}>{usuario.nome}</Text>
-                <Text style={styles.usuarioEmail}>{usuario.email}</Text>
-                <Text style={styles.usuarioRole}>{usuario.role}</Text>
+            <View key={usuario.id} style={styles.usuarioAdminCard}>
+              <View style={styles.usuarioAdminInfo}>
+                <Text style={styles.usuarioAdminNome}>{usuario.nome}</Text>
+                <Text style={styles.usuarioAdminEmail}>{usuario.email}</Text>
+                <Text style={styles.usuarioAdminRole}>{usuario.role}</Text>
               </View>
 
-              <View style={styles.usuarioActions}>
+              <View style={styles.usuarioAdminActions}>
                 <Switch
                   value={usuario.ativo}
                   onValueChange={(valor) => alterarStatusUsuario(usuario.id, valor)}
@@ -336,7 +337,7 @@ export default function AdminScreen() {
         {/* Seção Dados */}
         <View style={styles.section}>
           <View style={styles.sectionTitleContainer}>
-            <Database size={20} color="#F97316" />
+            <Database size={20} color="#9f795c" />
             <Text style={styles.sectionTitle}>Gerenciamento de Dados</Text>
           </View>
 
@@ -364,7 +365,7 @@ export default function AdminScreen() {
         {/* Informações do Sistema */}
         <View style={styles.section}>
           <View style={styles.sectionTitleContainer}>
-            <Settings size={20} color="#888" />
+            <Settings size={20} color="#9f795c" />
             <Text style={styles.sectionTitle}>Informações do Sistema</Text>
           </View>
 
@@ -476,239 +477,3 @@ export default function AdminScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f0f0f',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#1a1a1a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  logoutButton: {
-    backgroundColor: '#F87171',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  accessDenied: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  accessDeniedTitle: {
-    color: '#F87171',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 10,
-  },
-  accessDeniedText: {
-    color: '#888',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  sectionTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  addButton: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 15,
-    padding: 8,
-  },
-  usuarioCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#333',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  usuarioInfo: {
-    flex: 1,
-  },
-  usuarioNome: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  usuarioEmail: {
-    color: '#888',
-    fontSize: 14,
-    marginBottom: 2,
-  },
-  usuarioRole: {
-    color: '#3B82F6',
-    fontSize: 12,
-    textTransform: 'capitalize',
-  },
-  usuarioActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  actionButton: {
-    padding: 8,
-  },
-  dataActions: {
-    gap: 10,
-  },
-  dataButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3B82F6',
-    padding: 15,
-    borderRadius: 8,
-    gap: 8,
-  },
-  dangerButton: {
-    backgroundColor: '#F87171',
-  },
-  dataButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  systemInfo: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  infoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  infoLabel: {
-    color: '#888',
-    fontSize: 14,
-  },
-  infoValue: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#0f0f0f',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#1a1a1a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  modalContent: {
-    flex: 1,
-    padding: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#1a1a1a',
-    color: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-    fontSize: 16,
-  },
-  inputDisabled: {
-    backgroundColor: '#333',
-    color: '#888',
-  },
-  roleButtons: {
-    gap: 8,
-  },
-  roleButton: {
-    backgroundColor: '#333',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  roleButtonActive: {
-    backgroundColor: '#3B82F6',
-  },
-  roleButtonText: {
-    color: '#888',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  roleButtonTextActive: {
-    color: '#fff',
-  },
-  saveButton: {
-    backgroundColor: '#10B981',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

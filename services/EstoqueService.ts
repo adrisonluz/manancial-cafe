@@ -10,7 +10,7 @@ export interface Produto {
   estoqueMinimo: number;
   unidade: string;
   ativo: boolean;
-  criadoEm: string;
+  createdAt: string;
 }
 
 export class EstoqueService {
@@ -33,13 +33,13 @@ export class EstoqueService {
     }
   }
 
-  static async criarProduto(produtoData: Omit<Produto, 'id' | 'criadoEm'>): Promise<string> {
+  static async criarProduto(produtoData: Omit<Produto, 'id' | 'createdAt'>): Promise<string> {
     try {
       const produtosRef = ref(database, 'produtos');
       const produtoRef = push(produtosRef);
       const novoProduto = {
         ...produtoData,
-        criadoEm: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
       
       await set(produtoRef, novoProduto);

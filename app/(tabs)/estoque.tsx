@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Plus, CreditCard as Edit, Trash2, Search, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 import { EstoqueService } from '@/services/EstoqueService';
+import { styles } from '../styles';
 
 interface Produto {
   id: string;
@@ -21,7 +22,7 @@ interface Produto {
   estoqueMinimo: number;
   unidade: string;
   ativo: boolean;
-  criadoEm: string;
+  createdAt: string;
 }
 
 export default function EstoqueScreen() {
@@ -121,7 +122,7 @@ export default function EstoqueScreen() {
         const novoProduto = {
           id: novoProdutoId,
           ...dadosProduto,
-          criadoEm: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         };
         setProdutos(prev => [...prev, novoProduto]);
       }
@@ -365,180 +366,3 @@ export default function EstoqueScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#000',
-    borderBottomWidth: 1,
-    borderBottomColor: '#6b4324',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-  },
-  addButton: {
-    backgroundColor: '#6b4324',
-    borderRadius: 25,
-    padding: 10,
-  },
-  alertContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F97316',
-    padding: 12,
-    margin: 15,
-    borderRadius: 8,
-    gap: 8,
-  },
-  alertText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    margin: 15,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  searchInput: {
-    flex: 1,
-    color: '#fff',
-    padding: 15,
-    fontSize: 16,
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  produtoCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  produtoHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  produtoInfo: {
-    flex: 1,
-  },
-  produtoNome: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  produtoCategoria: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 2,
-  },
-  produtoActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  actionButton: {
-    padding: 8,
-  },
-  produtoDetalhes: {
-    gap: 8,
-  },
-  detalheItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detalheLabel: {
-    color: '#888',
-    fontSize: 14,
-  },
-  detalheValor: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  estoqueAlerta: {
-    color: '#F87171',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#0f0f0f',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#000',
-    borderBottomWidth: 1,
-    borderBottomColor: '#6b4324',
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-  },
-  cancelButton: {
-    color: '#3B82F6',
-    fontSize: 16,
-  },
-  modalContent: {
-    flex: 1,
-    padding: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  inputLabel: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#000',
-    color: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#6b4324',
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: '#9f795c',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: '#e6e6e6',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

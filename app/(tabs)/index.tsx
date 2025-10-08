@@ -13,6 +13,7 @@ import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2,
 import { useAuth } from '@/hooks/useAuth';
 import { PedidoService } from '@/services/PedidoService';
 import { EstoqueService } from '@/services/EstoqueService';
+import { styles } from '../styles';
 
 interface Produto {
   id: string;
@@ -34,7 +35,7 @@ interface Pedido {
   total: number;
   status: 'pendente' | 'preparando' | 'pronto' | 'entregue';
   cliente?: string;
-  criadoEm: string;
+  createdAt: string;
   criadoPor: string;
   entregueEm?: string;
 }
@@ -80,7 +81,7 @@ export default function PedidosScreen() {
     const inicioOntem = new Date(inicioHoje.getTime() - 24 * 60 * 60 * 1000);
 
     const pedidosRelevantes = todosPedidos.filter(pedido => {
-      const dataPedido = new Date(pedido.criadoEm);
+      const dataPedido = new Date(pedido.createdAt);
       
       // Pedidos de hoje
       if (dataPedido >= inicioHoje) return true;
@@ -108,13 +109,13 @@ export default function PedidosScreen() {
         }
         
         // Se mesmo status, ordenar por data de criação (mais antigos primeiro)
-        return new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime();
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
     }
 
     // Admin e operador veem todos os pedidos relevantes
     return pedidosRelevantes.sort((a, b) => 
-      new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime()
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   };
 
@@ -153,7 +154,7 @@ export default function PedidosScreen() {
         total,
         status: 'pendente',
         cliente: clienteNome,
-        criadoEm: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         criadoPor: user?.email || '',
       };
 
@@ -211,7 +212,7 @@ export default function PedidosScreen() {
 
   const calcularTempoPedido = (pedido: Pedido) => {
     const agora = new Date();
-    const criacao = new Date(pedido.criadoEm);
+    const criacao = new Date(pedido.createdAt);
     const fim = pedido.entregueEm ? new Date(pedido.entregueEm) : agora;
     
     const diferencaMs = fim.getTime() - criacao.getTime();
@@ -417,250 +418,3 @@ export default function PedidosScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#000',
-    borderBottomWidth: 1,
-    borderBottomColor: '#6b4324',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#9f795c',
-    marginTop: 2,
-  },
-  addButton: {
-    backgroundColor: '#6b4324',
-    borderRadius: 25,
-    padding: 10,
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  pedidoCard: {
-    backgroundColor: '#000',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#6b4324',
-  },
-  pedidoHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  pedidoInfo: {
-    flex: 1,
-  },
-  pedidoNumero: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-  },
-  pedidoCliente: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#9f795c',
-    marginTop: 2,
-  },
-  pedidoTempo: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: '#6b4324',
-    marginTop: 2,
-    fontWeight: '600',
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    borderRadius: 20,
-    gap: 5,
-  },
-  statusText: {
-    color: '#e6e6e6',
-    fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  pedidoItens: {
-    marginBottom: 10,
-  },
-  itemText: {
-    color: '#9f795c',
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    marginBottom: 3,
-  },
-  pedidoFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#6b4324',
-  },
-  pedidoTotal: {
-    color: '#e6e6e6',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-  },
-  statusButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  statusButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    gap: 4,
-  },
-  statusButtonText: {
-    color: '#e6e6e6',
-    fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 50,
-  },
-  emptyStateText: {
-    color: '#9f795c',
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    textAlign: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#000',
-    borderBottomWidth: 1,
-    borderBottomColor: '#6b4324',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-  },
-  clienteInput: {
-    backgroundColor: '#000',
-    color: '#e6e6e6',
-    padding: 15,
-    margin: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#6b4324',
-    fontFamily: 'Inter-Regular',
-  },
-  produtosList: {
-    flex: 1,
-    padding: 15,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    color: '#e6e6e6',
-    marginBottom: 15,
-  },
-  produtoItem: {
-    backgroundColor: '#000',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 15,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#6b4324',
-  },
-  produtoNome: {
-    color: '#e6e6e6',
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    flex: 1,
-  },
-  produtoPreco: {
-    color: '#6b4324',
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  pedidoResumo: {
-    backgroundColor: '#000',
-    padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#6b4324',
-  },
-  itemResumo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  itemResumoText: {
-    color: '#9f795c',
-    fontFamily: 'Inter-Regular',
-    flex: 1,
-  },
-  totalContainer: {
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#6b4324',
-    marginTop: 10,
-  },
-  totalText: {
-    color: '#e6e6e6',
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-    textAlign: 'center',
-  },
-  finalizarButton: {
-    backgroundColor: '#10B981',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  finalizarButtonText: {
-    color: '#e6e6e6',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
-  },
-});

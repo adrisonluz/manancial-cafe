@@ -10,6 +10,7 @@ import {
 import { Calendar, TrendingUp, TrendingDown, Users, DollarSign, ChartBar as BarChart, FileText } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RelatorioService } from '@/services/RelatorioService';
+import { styles } from '../styles';
 
 interface RelatorioFinanceiro {
   periodo: {
@@ -164,7 +165,7 @@ export default function RelatoriosScreen() {
             style={styles.dateButton}
             onPress={() => setShowDatePicker('inicio')}
           >
-            <Calendar size={16} color="#3B82F6" />
+            <Calendar size={16} color="#9f795c" />
             <Text style={styles.dateButtonText}>
               De: {formatDate(dataInicio)}
             </Text>
@@ -174,7 +175,7 @@ export default function RelatoriosScreen() {
             style={styles.dateButton}
             onPress={() => setShowDatePicker('fim')}
           >
-            <Calendar size={16} color="#3B82F6" />
+            <Calendar size={16} color="#9f795c" />
             <Text style={styles.dateButtonText}>
               Até: {formatDate(dataFim)}
             </Text>
@@ -199,17 +200,18 @@ export default function RelatoriosScreen() {
             <Text style={styles.sectionTitle}>Resumo Financeiro</Text>
             
             <View style={styles.resumoGrid}>
-              <View style={styles.resumoCard}>
+              <View style={[styles.resumoCard, styles.resumoRelatorioCard]}>
                 <Text style={styles.resumoLabel}>Total Vendas</Text>
-                <Text style={[styles.resumoValor, styles.valorPositivo]}>
+                <Text style={[styles.resumoValor, styles.resumoRelatorioValor, styles.valorPositivo]}>
                   {formatCurrency(relatorioFinanceiro.resumo.totalVendas)}
                 </Text>
               </View>
 
-              <View style={styles.resumoCard}>
+              <View style={[styles.resumoCard, styles.resumoRelatorioCard]}>
                 <Text style={styles.resumoLabel}>Saldo Líquido</Text>
                 <Text style={[
                   styles.resumoValor,
+                  styles.resumoRelatorioValor,
                   relatorioFinanceiro.resumo.saldoLiquido >= 0 
                     ? styles.valorPositivo 
                     : styles.valorNegativo
@@ -218,16 +220,16 @@ export default function RelatoriosScreen() {
                 </Text>
               </View>
 
-              <View style={styles.resumoCard}>
+              <View style={[styles.resumoCard, styles.resumoRelatorioCard]}>
                 <Text style={styles.resumoLabel}>Ticket Médio</Text>
-                <Text style={styles.resumoValor}>
+                <Text style={[styles.resumoValor, styles.resumoRelatorioValor]}>
                   {formatCurrency(relatorioFinanceiro.resumo.ticketMedio)}
                 </Text>
               </View>
 
-              <View style={styles.resumoCard}>
+              <View style={[styles.resumoCard, styles.resumoRelatorioCard]}>
                 <Text style={styles.resumoLabel}>Pedidos</Text>
-                <Text style={styles.resumoValor}>
+                <Text style={[styles.resumoValor, styles.resumoRelatorioValor]}>
                   {relatorioFinanceiro.resumo.quantidadePedidos}
                 </Text>
               </View>
@@ -294,7 +296,7 @@ export default function RelatoriosScreen() {
                 <View style={styles.avaliacaoItem}>
                   <Text style={styles.avaliacaoLabel}>Média Geral</Text>
                   <Text style={styles.avaliacaoValor}>
-                    {relatorioAdministrativo.avaliacoes.mediaGeral.toFixed(1)}⭐
+                    {relatorioAdministrativo.avaliacoes.mediaGeral.toFixed(1)} ⭐
                   </Text>
                 </View>
               </View>
@@ -304,7 +306,7 @@ export default function RelatoriosScreen() {
                 {Object.entries(relatorioAdministrativo.avaliacoes.porCategoria).map(([categoria, media]) => (
                   <View key={categoria} style={styles.categoriaItem}>
                     <Text style={styles.categoriaLabel}>{categoria}:</Text>
-                    <Text style={styles.categoriaValor}>{media.toFixed(1)}⭐</Text>
+                    <Text style={styles.categoriaValor}>{media.toFixed(1)} ⭐</Text>
                   </View>
                 ))}
               </View>
@@ -331,7 +333,7 @@ export default function RelatoriosScreen() {
                     <View style={styles.statItem}>
                       <Text style={styles.statLabel}>Avaliação Média:</Text>
                       <Text style={styles.statValor}>
-                        {usuario.avaliacaoMedia.toFixed(1)}⭐
+                        {usuario.avaliacaoMedia.toFixed(1)} ⭐
                       </Text>
                     </View>
                   </View>
@@ -357,284 +359,3 @@ export default function RelatoriosScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f0f0f',
-  },
-  header: {
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#1a1a1a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  controls: {
-    padding: 15,
-    backgroundColor: '#1a1a1a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  tipoButtons: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    gap: 10,
-  },
-  tipoButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-    backgroundColor: '#333',
-    borderRadius: 8,
-    gap: 8,
-  },
-  tipoButtonActive: {
-    backgroundColor: '#3B82F6',
-  },
-  tipoButtonText: {
-    color: '#888',
-    fontWeight: '600',
-  },
-  tipoButtonTextActive: {
-    color: '#fff',
-  },
-  dateControls: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 15,
-  },
-  dateButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#333',
-    borderRadius: 8,
-    gap: 8,
-  },
-  dateButtonText: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  generateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#10B981',
-    padding: 15,
-    borderRadius: 8,
-    gap: 8,
-  },
-  generateButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 15,
-  },
-  sectionSubtitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  resumoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 20,
-  },
-  resumoCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: '#1a1a1a',
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  resumoLabel: {
-    color: '#888',
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  resumoValor: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  valorPositivo: {
-    color: '#10B981',
-  },
-  valorNegativo: {
-    color: '#F87171',
-  },
-  section: {
-    marginBottom: 25,
-  },
-  movimentacaoItem: {
-    backgroundColor: '#1a1a1a',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  movimentacaoHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  movimentacaoData: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  movimentacaoValor: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  movimentacaoDescricao: {
-    color: '#888',
-    fontSize: 12,
-  },
-  vendaItem: {
-    backgroundColor: '#1a1a1a',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  vendaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  vendaPedido: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  vendaTotal: {
-    color: '#10B981',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  vendaDetalhes: {
-    color: '#888',
-    fontSize: 12,
-  },
-  avaliacoesResumo: {
-    flexDirection: 'row',
-    gap: 15,
-    marginBottom: 15,
-  },
-  avaliacaoItem: {
-    flex: 1,
-    backgroundColor: '#1a1a1a',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  avaliacaoLabel: {
-    color: '#888',
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  avaliacaoValor: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  avaliacoesPorCategoria: {
-    backgroundColor: '#1a1a1a',
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  categoriaTitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 10,
-  },
-  categoriaItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 5,
-  },
-  categoriaLabel: {
-    color: '#888',
-    fontSize: 14,
-    textTransform: 'capitalize',
-  },
-  categoriaValor: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  usuarioCard: {
-    backgroundColor: '#1a1a1a',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  usuarioNome: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  usuarioEmail: {
-    color: '#888',
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  usuarioStats: {
-    gap: 8,
-    marginBottom: 10,
-  },
-  statItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  statLabel: {
-    color: '#888',
-    fontSize: 14,
-  },
-  statValor: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  usuarioUltimoAcesso: {
-    color: '#666',
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-});
