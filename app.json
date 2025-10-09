@@ -30,8 +30,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1bd06d47-c905-4b23-ab4c-08f8f5ce38de"
+        "projectId": "c929c0ca-0a65-4436-a2db-ace25c10b5e6"
       }
-    }
+    },
+    "owner": "adrisonluz"
   }
 }
