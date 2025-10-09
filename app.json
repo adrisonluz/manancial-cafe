@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bolt-expo-nativewind",
-    "slug": "bolt-expo-nativewind",
+    "name": "Manancial Café",
+    "slug": "manancial-cafe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -26,6 +26,12 @@
     },
     "android": {
       "package": "com.anonymous.boltexponativewind"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1bd06d47-c905-4b23-ab4c-08f8f5ce38de"
+      }
     }
   }
 }
