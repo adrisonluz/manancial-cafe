@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { ShoppingCart, Package, DollarSign, ChartBar as BarChart, Star, Users } from 'lucide-react-native';
+import { ShoppingCart, Package, DollarSign, ChartBar as BarChart, Star, Users, Contact } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function TabLayout() {
@@ -89,6 +89,28 @@ export default function TabLayout() {
             : (
               <Tabs.Screen
                 name="avaliacoes"
+                options={{
+                  href: null
+                }}
+              />
+            )
+        }
+
+        { 
+          user?.role === "admin" 
+          ? (<Tabs.Screen
+                key="clientes"
+                name="clientes"
+                options={{
+                  title: "Clientes",
+                  tabBarIcon: ({ size, color }) => (  
+                    <Contact size={size} color={color} />
+                  ),
+                }}
+              />) 
+            : (
+              <Tabs.Screen
+                name="clientes"
                 options={{
                   href: null
                 }}
