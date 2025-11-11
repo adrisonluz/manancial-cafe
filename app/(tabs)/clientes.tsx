@@ -97,7 +97,7 @@ export default function ClientesScreen() {
         <View>
           <Text style={styles.headerTitle}>Clientes</Text>
           <Text style={styles.headerSubtitle}>
-            Todos os clientesList
+            Todos os clientes
           </Text>
         </View>
         <TouchableOpacity

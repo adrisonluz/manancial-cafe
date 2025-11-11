@@ -4,12 +4,14 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   TextInput,
   FlatList,
   RefreshControl,
+  Modal,
   Alert
 } from 'react-native';
-import { Star, Search, MessageSquare } from 'lucide-react-native';
+import { Star, Search, MessageSquare, ScanEye, X } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { AvaliacaoService } from '@/services/AvaliacaoService';
 import { styles } from '../styles';
@@ -36,6 +38,7 @@ export default function AvaliacoesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -207,49 +210,19 @@ export default function AvaliacoesScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Avaliações</Text>
-        <Text style={styles.headerSubtitle}>Feedback dos clientes</Text>
-      </View>
-
-      {/* Resumo Estatísticas */}
-      {avaliacoes.length > 0 && (
-        <View style={styles.resumoContainer}>
-          <View style={styles.mediaGeralCard}>
-            <Text style={styles.mediaGeralLabel}>Média Geral</Text>
-            <View style={styles.mediaGeralInfo}>
-              <Text style={styles.mediaGeralValorGrande}>
-                {getMediaGeral().toFixed(1)}
-              </Text>
-              <View style={styles.mediaGeralStars}>
-                {renderStars(Math.round(getMediaGeral()), 20)}
-              </View>
-            </View>
-            <Text style={styles.totalAvaliacoes}>
-              Baseado em {avaliacoes.length} avaliações
-            </Text>
-          </View>
-
-          <View style={styles.mediasPorCategoria}>
-            {[
-              { key: 'atendimento', label: 'Atendimento' },
-              { key: 'precosProdutos', label: 'Preços' },
-              { key: 'qualidadeProdutos', label: 'Qualidade' },
-              { key: 'ambiente', label: 'Ambiente' },
-              { key: 'tempoPreparo', label: 'Tempo Preparo' },
-            ].map(categoria => (
-              <View key={categoria.key} style={styles.categoriaResumo}>
-                <Text style={styles.categoriaResumoNome}>{categoria.label}</Text>
-                <View style={styles.categoriaResumoValor}>
-                  <Text style={styles.mediaValor}>
-                    {getMediaCategoria(categoria.key).toFixed(1)}
-                  </Text>
-                  {renderStars(Math.round(getMediaCategoria(categoria.key)), 14)}
-                </View>
-              </View>
-            ))}
-          </View>
+        <View>
+          <Text style={styles.headerTitle}>Avaliações</Text>
+          <Text style={styles.headerSubtitle}>
+            Feedback dos clientes
+          </Text>
         </View>
-      )}
+        <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <ScanEye size={24} color="#fff" />
+          </TouchableOpacity>
+      </View>
 
       {/* Busca */}
       <View style={styles.searchContainer}>
@@ -262,6 +235,7 @@ export default function AvaliacoesScreen() {
           onChangeText={setSearchText}
         />
       </View>
+      
 
       {/* Lista de Avaliações */}
       <FlatList
@@ -300,6 +274,61 @@ export default function AvaliacoesScreen() {
           ) : null
         }
       />
+
+      {/* Modal Novo Cliente */}
+      <Modal visible={modalVisible} animationType="slide" presentationStyle="pageSheet">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                Média Geral
+              </Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <X size={24} color="#fff" />
+              </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.modalContent}>
+            {avaliacoes.length > 0 && (
+              <View style={styles.resumoContainer}>
+                <View style={styles.mediaGeralCard}>
+                  <Text style={styles.mediaGeralLabel}>Média Geral</Text>
+                  <View style={styles.mediaGeralInfo}>
+                    <Text style={styles.mediaGeralValorGrande}>
+                      {getMediaGeral().toFixed(1)}
+                    </Text>
+                    <View style={styles.mediaGeralStars}>
+                      {renderStars(Math.round(getMediaGeral()), 20)}
+                    </View>
+                  </View>
+                  <Text style={styles.totalAvaliacoes}>
+                    Baseado em {avaliacoes.length} avaliações
+                  </Text>
+                </View>
+
+                <View style={styles.mediasPorCategoria}>
+                  {[
+                    { key: 'atendimento', label: 'Atendimento' },
+                    { key: 'precosProdutos', label: 'Preços' },
+                    { key: 'qualidadeProdutos', label: 'Qualidade' },
+                    { key: 'ambiente', label: 'Ambiente' },
+                    { key: 'tempoPreparo', label: 'Tempo Preparo' },
+                  ].map(categoria => (
+                    <View key={categoria.key} style={styles.categoriaResumo}>
+                      <Text style={styles.categoriaResumoNome}>{categoria.label}</Text>
+                      <View style={styles.categoriaResumoValor}>
+                        <Text style={styles.mediaValor}>
+                          {getMediaCategoria(categoria.key).toFixed(1)}
+                        </Text>
+                        {renderStars(Math.round(getMediaCategoria(categoria.key)), 14)}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 }

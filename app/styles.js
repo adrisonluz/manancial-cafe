@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#6b4324',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
@@ -985,6 +985,7 @@ const styles = StyleSheet.create({
     categoriaResumoValor: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginTop: '10px',
         gap: 8,
     },
     mediaValor: {
