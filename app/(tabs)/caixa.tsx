@@ -186,7 +186,7 @@ export default function CaixaScreen() {
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('pt-BR');
+    return date.toLocaleString('pt-BR', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' });
   };
 
   if (!sessaoAtual) {

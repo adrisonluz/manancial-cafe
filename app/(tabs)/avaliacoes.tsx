@@ -7,8 +7,10 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
+  Alert
 } from 'react-native';
 import { Star, Search, MessageSquare } from 'lucide-react-native';
+import { useAuth } from '@/hooks/useAuth';
 import { AvaliacaoService } from '@/services/AvaliacaoService';
 import { styles } from '../styles';
 
@@ -26,6 +28,7 @@ interface Avaliacao {
 }
 
 export default function AvaliacoesScreen() {
+  const { user } = useAuth();
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [avaliacoesFiltradas, setAvaliacoesFiltradas] = useState<Avaliacao[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -37,11 +40,16 @@ export default function AvaliacoesScreen() {
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
+    if (user?.role !== 'admin') {
+      Alert.alert('Acesso Negado', 'Você não tem permissão para acessar esta área');
+      return;
+    }
+
     loadAvaliacoes();
     // Atualizar a cada 30 segundos para pegar novas avaliações
     const interval = setInterval(loadAvaliacoes, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     filtrarAvaliacoes();
