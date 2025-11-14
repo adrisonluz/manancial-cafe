@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 6,
         gap: 4,
+        backgroundColor: '#51CE70'
     },
     statusButtonText: {
         color: '#e6e6e6',
