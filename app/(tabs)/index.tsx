@@ -11,9 +11,12 @@ import {
 } from 'react-native';
 import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2, ChefHat, Truck } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { ClienteService, Cliente } from '@/services/ClienteService';
 import { PedidoService } from '@/services/PedidoService';
 import { EstoqueService } from '@/services/EstoqueService';
-import { styles } from '../styles';
+import { styles as stylesOriginal } from '../styles';
+// Force styles to any to avoid cross-platform type issues between web/native style shapes
+const styles: any = stylesOriginal;
 
 interface Produto {
   id: string;
@@ -33,7 +36,7 @@ interface Pedido {
   numero: number;
   itens: ItemPedido[];
   total: number;
-  status: 'pendente' | 'preparando' | 'pronto' | 'entregue';
+  status: 'pendente' | 'em haver' | 'pago';
   cliente?: string;
   createdAt: string;
   criadoPor: string;
@@ -47,6 +50,9 @@ export default function PedidosScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [pedidoAtual, setPedidoAtual] = useState<ItemPedido[]>([]);
   const [clienteNome, setClienteNome] = useState('');
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [clienteModalVisible, setClienteModalVisible] = useState(false);
+  const [selectedClienteId, setSelectedClienteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,15 +64,17 @@ export default function PedidosScreen() {
 
   const loadData = async () => {
     try {
-      const [pedidosData, produtosData] = await Promise.all([
-        PedidoService.getPedidos(),
-        EstoqueService.getProdutos(),
-      ]);
+      const [pedidosData, produtosData, clientesData] = await Promise.all([
+          PedidoService.getPedidos(),
+          EstoqueService.getProdutos(),
+          ClienteService.getClientes(),
+        ]);
       
       // Filtrar pedidos baseado no papel do usuário
       const pedidosFiltrados = filtrarPedidosPorPapel(pedidosData);
       setPedidos(pedidosFiltrados);
       setProdutos(produtosData);
+      setClientes(clientesData);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -75,7 +83,7 @@ export default function PedidosScreen() {
   };
 
   const filtrarPedidosPorPapel = (todosPedidos: Pedido[]) => {
-    // Filtrar pedidos do dia atual ou anteriores não entregues
+  // Filtrar pedidos do dia atual ou anteriores não pagos
     const agora = new Date();
     const inicioHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
     const inicioOntem = new Date(inicioHoje.getTime() - 24 * 60 * 60 * 1000);
@@ -86,37 +94,22 @@ export default function PedidosScreen() {
       // Pedidos de hoje
       if (dataPedido >= inicioHoje) return true;
       
-      // Pedidos de ontem que ainda não foram entregues
-      if (dataPedido >= inicioOntem && pedido.status !== 'entregue') return true;
+      // Pedidos de ontem que ainda não foram pagos
+      if (dataPedido >= inicioOntem && pedido.status !== 'pago') return true;
       
       return false;
     });
 
-    // Filtrar por papel do usuário
-    if (user?.role === 'cozinheiro') {
-      const pedidosCozinha = pedidosRelevantes.filter(pedido => 
-        ['pendente', 'preparando', 'pronto'].includes(pedido.status)
-      );
-      
-      // Ordenar por status na ordem: pendente, preparando, pronto
-      const ordemStatus = { 'pendente': 1, 'preparando': 2, 'pronto': 3 };
-      return pedidosCozinha.sort((a, b) => {
-        const ordemA = ordemStatus[a.status as keyof typeof ordemStatus];
-        const ordemB = ordemStatus[b.status as keyof typeof ordemStatus];
-        
-        if (ordemA !== ordemB) {
-          return ordemA - ordemB;
-        }
-        
-        // Se mesmo status, ordenar por data de criação (mais antigos primeiro)
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      });
-    }
+    // Ordenar por status na ordem: pendente, em haver, pago
+    const ordemStatus = { 'pendente': 1, 'em haver': 2, 'pago': 3 };
+    return pedidosRelevantes.sort((a, b) => {
+      const ordemA = ordemStatus[a.status as keyof typeof ordemStatus] || 99;
+      const ordemB = ordemStatus[b.status as keyof typeof ordemStatus] || 99;
 
-    // Admin e operador veem todos os pedidos relevantes
-    return pedidosRelevantes.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+      if (ordemA !== ordemB) return ordemA - ordemB;
+      // Se mesmo status, ordenar por data de criação (mais recentes primeiro)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   };
 
   const adicionarItem = (produto: Produto) => {
@@ -186,7 +179,7 @@ export default function PedidosScreen() {
             ? { 
                 ...pedido, 
                 status: novoStatus,
-                ...(novoStatus === 'entregue' && { entregueEm: new Date().toISOString() })
+                ...(novoStatus === 'pago' && { entregueEm: new Date().toISOString() })
               } 
             : pedido
         )
@@ -229,9 +222,8 @@ export default function PedidosScreen() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pendente': return '#F97316';
-      case 'preparando': return '#3B82F6';
-      case 'pronto': return '#10B981';
-      case 'entregue': return '#6B7280';
+      case 'em haver': return '#3B82F6';
+      case 'pago': return '#10B981';
       default: return '#F97316';
     }
   };
@@ -239,9 +231,8 @@ export default function PedidosScreen() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pendente': return <Clock size={16} color="#F97316" />;
-      case 'preparando': return <ChefHat size={16} color="#3B82F6" />;
-      case 'pronto': return <CheckCircle size={16} color="#10B981" />;
-      case 'entregue': return <Truck size={16} color="#6B7280" />;
+      case 'em haver': return <Edit size={16} color="#3B82F6" />;
+      case 'pago': return <CheckCircle size={16} color="#10B981" />;
       default: return <Clock size={16} color="#F97316" />;
     }
   };
@@ -249,9 +240,8 @@ export default function PedidosScreen() {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'pendente': return 'Pendente';
-      case 'preparando': return 'Preparando';
-      case 'pronto': return 'Pronto';
-      case 'entregue': return 'Entregue';
+      case 'em haver': return 'Em haver';
+      case 'pago': return 'Pago';
       default: return status;
     }
   };
@@ -289,8 +279,8 @@ export default function PedidosScreen() {
                   <Text style={styles.pedidoCliente}>{pedido.cliente}</Text>
                 )}
                 <Text style={styles.pedidoTempo}>
-                  {pedido.status === 'entregue' 
-                    ? `Entregue em ${calcularTempoPedido(pedido)}`
+                  {pedido.status === 'pago' 
+                    ? `Pago em ${calcularTempoPedido(pedido)}`
                     : `Há ${calcularTempoPedido(pedido)}`
                   }
                 </Text>
@@ -312,31 +302,23 @@ export default function PedidosScreen() {
             <View style={styles.pedidoFooter}>
               <Text style={styles.pedidoTotal}>Total: R$ {pedido.total.toFixed(2)}</Text>
               <View style={styles.statusButtons}>
-                {pedido.status === 'pendente' && podeAlterarStatus(pedido, 'preparando') && (
+                {pedido.status === 'pendente' && (
                   <TouchableOpacity
                     style={[styles.statusButton, { backgroundColor: '#3B82F6' }]}
-                    onPress={() => atualizarStatusPedido(pedido.id, 'preparando')}
+                    onPress={() => atualizarStatusPedido(pedido.id, 'em haver')}
                   >
-                    <ChefHat size={14} color="#fff" />
-                    <Text style={styles.statusButtonText}>Iniciar</Text>
+                    <Edit size={14} color="#fff" />
+                    <Text style={styles.statusButtonText}>Marcar em haver</Text>
                   </TouchableOpacity>
                 )}
-                {pedido.status === 'preparando' && podeAlterarStatus(pedido, 'pronto') && (
+
+                {pedido.status === 'em haver' && (
                   <TouchableOpacity
                     style={[styles.statusButton, { backgroundColor: '#10B981' }]}
-                    onPress={() => atualizarStatusPedido(pedido.id, 'pronto')}
+                    onPress={() => atualizarStatusPedido(pedido.id, 'pago')}
                   >
                     <CheckCircle size={14} color="#fff" />
-                    <Text style={styles.statusButtonText}>Finalizar</Text>
-                  </TouchableOpacity>
-                )}
-                {pedido.status === 'pronto' && podeAlterarStatus(pedido, 'entregue') && (
-                  <TouchableOpacity
-                    style={[styles.statusButton, { backgroundColor: '#6B7280' }]}
-                    onPress={() => atualizarStatusPedido(pedido.id, 'entregue')}
-                  >
-                    <Truck size={14} color="#fff" />
-                    <Text style={styles.statusButtonText}>Entregar</Text>
+                    <Text style={styles.statusButtonText}>Marcar como pago</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -366,13 +348,55 @@ export default function PedidosScreen() {
             </TouchableOpacity>
           </View>
 
-          <TextInput
-            style={styles.clienteInput}
-            placeholder="Nome do cliente (opcional)"
-            placeholderTextColor="#666"
-            value={clienteNome}
-            onChangeText={setClienteNome}
-          />
+          {/* Cliente selecionado via modal */}
+          <TouchableOpacity
+              style={[styles.clienteInput, { justifyContent: 'center' }]}
+              onPress={() => setClienteModalVisible(true)}
+            >
+              <Text style={{ color: clienteNome ? '#e6e6e6' : '#9a9a9a' }}>
+                {clienteNome || 'Selecionar cliente (opcional)'}
+              </Text>
+            </TouchableOpacity>
+
+          <Modal visible={clienteModalVisible} animationType="slide" presentationStyle="pageSheet">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Selecionar Cliente</Text>
+                <TouchableOpacity onPress={() => setClienteModalVisible(false)}>
+                  <X size={24} color="#fff" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={{ padding: 16 }}>
+                {clientes.map((c) => (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={styles.clienteItem}
+                    onPress={() => {
+                      setClienteNome(c.nome);
+                      setSelectedClienteId(c.id);
+                      setClienteModalVisible(false);
+                    }}
+                  >
+                    <Text style={styles.clienteCliente}>{c.nome}</Text>
+                    <Text style={{ color: '#9f795c' }}>{c.telefone}</Text>
+                  </TouchableOpacity>
+                ))}
+
+                <TouchableOpacity
+                  style={[styles.produtoItem, { marginTop: 12, backgroundColor: '#2d2d2d' }]}
+                  onPress={() => {
+                    // Nenhum cliente selecionado
+                    setClienteNome('');
+                    setSelectedClienteId(null);
+                    setClienteModalVisible(false);
+                  }}
+                >
+                  <Text style={{ color: '#fff' }}>Nenhum cliente</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </Modal>
 
           <ScrollView style={styles.produtosList}>
             <Text style={styles.sectionTitle}>Produtos</Text>

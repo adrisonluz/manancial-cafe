@@ -20,7 +20,7 @@ export interface Pedido {
   numero: number;
   itens: ItemPedido[];
   total: number;
-  status: 'pendente' | 'preparando' | 'pronto' | 'entregue';
+  status: 'pendente' | 'em haver' | 'pago';
   cliente?: string;
   createdAt: string;
   criadoPor: string;
@@ -67,7 +67,7 @@ export class PedidoService {
       const statusRef = ref(database, `pedidos/${pedidoId}/status`);
       await set(statusRef, novoStatus);
       
-      if (novoStatus === 'entregue') {
+      if (novoStatus === 'pago') {
         const entregueRef = ref(database, `pedidos/${pedidoId}/entregueEm`);
         await set(entregueRef, new Date().toISOString());
       }
