@@ -9,9 +9,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Eye, EyeOff, Coffee } from 'lucide-react-native';
+import { Eye, EyeOff } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function SignInScreen() {
@@ -50,7 +51,7 @@ export default function SignInScreen() {
       >
         <View style={styles.logoContainer}>
           <View style={styles.logo}>
-            <Coffee size={48} color="#fff" />
+            <Image source={require('../assets/images/icon.png')} style={styles.logoImage} />
           </View>
           <Text style={styles.logoText}>Manancial Café</Text>
           <Text style={styles.logoSubtitle}>Sistema de Gestão</Text>
@@ -132,9 +133,9 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   logo: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     backgroundColor: '#6b4324',
     alignItems: 'center',
     justifyContent: 'center',
@@ -144,6 +145,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 8,
+  },
+  logoImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
   logoText: {
     fontSize: 28,
