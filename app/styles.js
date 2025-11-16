@@ -1009,13 +1009,30 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#6b4324',
     },
+    avaliacaoPageCard: {
+        backgroundColor: '#000',
+        borderRadius: 12,
+        padding: 15,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#6b4324',
+    },
     avaliacaoHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 15,
     },
+    avaliacaoPageHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
     avaliacaoData: {
+        flex: 1,
+    },
+    avaliacaoPageData: {
         flex: 1,
     },
     dataText: {
@@ -1051,26 +1068,26 @@ const styles = StyleSheet.create({
         gap: 12,
         marginBottom: 15,
     },
-    // categoriaItem: {
-    //     flex: 1,
-    //     minWidth: '45%',
-    //     backgroundColor: '#000',
-    //     padding: 10,
-    //     borderRadius: 8,
-    //     borderWidth: 1,
-    //     borderColor: '#6b4324',
-    // },
-    // categoriaLabel: {
-    //     color: '#9f795c',
-    //     fontSize: 12,
-    //     fontFamily: 'Inter-Regular',
-    //     marginBottom: 5,
-    // },
-    // categoriaValor: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     gap: 6,
-    // },
+    categoriaAvaliacaoItem: {
+        flex: 1,
+        minWidth: '45%',
+        backgroundColor: '#000',
+        padding: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#6b4324',
+    },
+    categoriaAvaliacaoLabel: {
+        color: '#9f795c',
+        fontSize: 12,
+        fontFamily: 'Inter-Regular',
+        marginBottom: 5,
+    },
+    categoriaAvaliacaoValor: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
     categoriaNumero: {
         color: '#e6e6e6',
         fontSize: 14,

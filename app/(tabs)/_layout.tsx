@@ -1,9 +1,22 @@
-import { Tabs } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Tabs, router } from 'expo-router';
 import { ShoppingCart, Package, DollarSign, ChartBar as BarChart, Star, Users, Contact } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function TabLayout() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // If auth state is still loading, render nothing (keeps splash/placeholder visible).
+  if (loading) return null;
+
+  // If there's no user, redirect to signin and render nothing here.
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/signin');
+    }
+  }, [loading, user]);
+
+  if (!user) return null;
 
   return (
     <Tabs
