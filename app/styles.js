@@ -1282,6 +1282,9 @@ const styles = StyleSheet.create({
     roleButtonTextActive: {
         color: '#fff',
     },
+    inputText: {
+        color: '#fff',
+    }
 });
 
 export { styles }; // or export default styles;
