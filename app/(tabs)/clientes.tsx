@@ -84,10 +84,10 @@ export default function ClientesScreen() {
             }
             
             setModalVisible(false);
-            Alert.alert('Sucesso', 'Usuário salvo com sucesso!');
+            Alert.alert('Sucesso', 'Cliente salvo com sucesso!');
         } catch (error) {
-            console.error('Erro ao salvar usuário:', error);
-            Alert.alert('Erro', 'Falha ao salvar usuário');
+            console.error('Erro ao salvar cliente:', error);
+            Alert.alert('Erro', 'Falha ao salvar cliente');
         }
     };
 
@@ -118,15 +118,15 @@ export default function ClientesScreen() {
                   <Text style={styles.clienteCliente}>{cliente.nome}</Text>
                 )}
                 <Text style={styles.clienteTempo}>
-
+                  {cliente.email}
                 </Text>
               </View>
             </View>
 
             <View style={styles.pedidoFooter}>
-              <Text style={styles.pedidoTotal}>Total: R$ </Text>
+              <Text style={styles.pedidoTotal}>{cliente.telefone}</Text>
               <View style={styles.statusButtons}>
-
+                teste
               </View>
             </View>
           </View>
@@ -152,7 +152,7 @@ export default function ClientesScreen() {
                     style={styles.input}
                     value={formCliente.nome}
                     onChangeText={(text) => setFormCliente(prev => ({...prev, nome: text}))}
-                    placeholder="Nome do usuário"
+                    placeholder="Nome do Cliente"
                     placeholderTextColor="#666"
                 />
                 </View>

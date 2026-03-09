@@ -6,7 +6,7 @@ export interface Usuario {
   id: string;
   email: string;
   nome: string;
-  role: 'admin' | 'operador' | 'cozinheiro';
+  role: 'admin' | 'operador';
   ativo: boolean;
   ultimoAcesso?: string;
   createdAt: string;

@@ -433,7 +433,6 @@ export default function AdminScreen() {
                 {[
                   { key: 'admin', label: 'Administrador' },
                   { key: 'operador', label: 'Operador' },
-                  { key: 'cozinheiro', label: 'Cozinheiro' },
                 ].map((role) => (
                   <TouchableOpacity
                     key={role.key}
