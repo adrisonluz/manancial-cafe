@@ -29,6 +29,8 @@ export interface RelatorioFinanceiro {
     pedido: number;
     total: number;
     itens: number;
+    cliente?: string;
+    status?: string;
   }>;
 }
 
@@ -58,12 +60,21 @@ export interface RelatorioAdministrativo {
 }
 
 export class RelatorioService {
-  static async getRelatorioFinanceiro(dataInicio: Date, dataFim: Date): Promise<RelatorioFinanceiro> {
+  static async getRelatorioFinanceiro(dataInicio: Date, dataFim: Date, clienteName?: string | null, statusFilter?: string | null): Promise<RelatorioFinanceiro> {
     try {
       const [pedidos, sessoes] = await Promise.all([
         PedidoService.getPedidosPorPeriodo(dataInicio, dataFim),
         CaixaService.getSessoesPorPeriodo(dataInicio, dataFim),
       ]);
+
+      // Aplicar filtros de cliente/status se fornecidos
+      let pedidosFiltrados = pedidos;
+      if (clienteName) {
+        pedidosFiltrados = pedidosFiltrados.filter(p => (p.cliente || '') === clienteName);
+      }
+      if (statusFilter && statusFilter !== 'todos') {
+        pedidosFiltrados = pedidosFiltrados.filter(p => (p.status || '') === statusFilter);
+      }
 
       // Buscar movimentações de todas as sessões do período
       const movimentacoes = [];
@@ -72,7 +83,7 @@ export class RelatorioService {
         movimentacoes.push(...movimentosSessao);
       }
 
-      const totalVendas = pedidos.reduce((sum, pedido) => sum + pedido.total, 0);
+  const totalVendas = pedidosFiltrados.reduce((sum, pedido) => sum + pedido.total, 0);
       const totalEntradas = movimentacoes
         .filter(m => m.tipo === 'entrada')
         .reduce((sum, m) => sum + m.valor, 0);
@@ -80,7 +91,7 @@ export class RelatorioService {
         .filter(m => m.tipo === 'saida')
         .reduce((sum, m) => sum + m.valor, 0);
 
-      const ticketMedio = pedidos.length > 0 ? totalVendas / pedidos.length : 0;
+  const ticketMedio = pedidosFiltrados.length > 0 ? totalVendas / pedidosFiltrados.length : 0;
       const saldoLiquido = totalEntradas - totalSaidas;
 
       return {
@@ -103,11 +114,13 @@ export class RelatorioService {
           valor: m.valor,
           categoria: m.categoria,
         })),
-        vendas: pedidos.map(p => ({
+        vendas: pedidosFiltrados.map(p => ({
           data: p.createdAt,
           pedido: p.numero,
           total: p.total,
           itens: p.itens.length,
+          cliente: p.cliente || undefined,
+          status: (p as any).status || undefined,
         })),
       };
     } catch (error) {

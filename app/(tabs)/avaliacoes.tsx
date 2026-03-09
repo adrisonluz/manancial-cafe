@@ -140,9 +140,9 @@ export default function AvaliacoesScreen() {
   };
 
   const renderAvaliacaoItem = ({ item }: { item: Avaliacao }) => (
-    <View style={styles.avaliacaoCard}>
-      <View style={styles.avaliacaoHeader}>
-        <View style={styles.avaliacaoData}>
+    <View style={styles.avaliacaoPageCard}>
+      <View style={styles.avaliacaoPageHeader}>
+        <View style={styles.avaliacaoPageData}>
           <Text style={styles.dataText}>{formatDateTime(item.createdAt)}</Text>
           {item.name && (
             <Text style={styles.nomeText}>{item.name}</Text>
@@ -157,41 +157,41 @@ export default function AvaliacoesScreen() {
       </View>
 
       <View style={styles.categoriasGrid}>
-        <View style={styles.categoriaItem}>
-          <Text style={styles.categoriaLabel}>Atendimento</Text>
-          <View style={styles.categoriaValor}>
+        <View style={styles.categoriaAvaliacaoItem}>
+          <Text style={styles.categoriaAvaliacaoLabel}>Atendimento</Text>
+          <View style={styles.categoriaAvaliacaoValor}>
             <Text style={styles.categoriaNumero}>{item.atendimento.toFixed(1)}</Text>
             {renderStars(item.atendimento, 12)}
           </View>
         </View>
 
-        <View style={styles.categoriaItem}>
-          <Text style={styles.categoriaLabel}>Preços</Text>
-          <View style={styles.categoriaValor}>
+        <View style={styles.categoriaAvaliacaoItem}>
+          <Text style={styles.categoriaAvaliacaoLabel}>Preços</Text>
+          <View style={styles.categoriaAvaliacaoValor}>
             <Text style={styles.categoriaNumero}>{item.precosProdutos.toFixed(1)}</Text>
             {renderStars(item.precosProdutos, 12)}
           </View>
         </View>
 
-        <View style={styles.categoriaItem}>
-          <Text style={styles.categoriaLabel}>Qualidade</Text>
-          <View style={styles.categoriaValor}>
+        <View style={styles.categoriaAvaliacaoItem}>
+          <Text style={styles.categoriaAvaliacaoLabel}>Qualidade</Text>
+          <View style={styles.categoriaAvaliacaoValor}>
             <Text style={styles.categoriaNumero}>{item.qualidadeProdutos.toFixed(1)}</Text>
             {renderStars(item.qualidadeProdutos, 12)}
           </View>
         </View>
 
-        <View style={styles.categoriaItem}>
-          <Text style={styles.categoriaLabel}>Ambiente</Text>
-          <View style={styles.categoriaValor}>
+        <View style={styles.categoriaAvaliacaoItem}>
+          <Text style={styles.categoriaAvaliacaoLabel}>Ambiente</Text>
+          <View style={styles.categoriaAvaliacaoValor}>
             <Text style={styles.categoriaNumero}>{item.ambiente.toFixed(1)}</Text>
             {renderStars(item.ambiente, 12)}
           </View>
         </View>
 
-        <View style={styles.categoriaItem}>
-          <Text style={styles.categoriaLabel}>Tempo Preparo</Text>
-          <View style={styles.categoriaValor}>
+        <View style={styles.categoriaAvaliacaoItem}>
+          <Text style={styles.categoriaAvaliacaoLabel}>Tempo Preparo</Text>
+          <View style={styles.categoriaAvaliacaoValor}>
             <Text style={styles.categoriaNumero}>{item.tempoPreparo.toFixed(1)}</Text>
             {renderStars(item.tempoPreparo, 12)}
           </View>

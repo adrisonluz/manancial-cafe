@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthService } from '@/services/AuthService';
+import { router } from 'expo-router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, database } from '@/services/FirebaseConfig';
+import { ref, get } from 'firebase/database';
 
 interface User {
   id: string;
@@ -23,10 +27,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthState();
+    // Listen to Firebase auth state changes to persist login across restarts.
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userId = firebaseUser.uid;
+          const userRef = ref(database, `usuarios/${userId}`);
+          const snapshot = await get(userRef);
+          const userData = snapshot.val();
+
+          if (userData && userData.ativo) {
+            const current = {
+              id: userId,
+              email: firebaseUser.email || '',
+              nome: userData.nome,
+              role: userData.role,
+            };
+            setUser(current);
+            await AsyncStorage.setItem('@auth_user', JSON.stringify(current));
+          } else {
+            // user not found or inactive in DB — sign out locally
+            setUser(null);
+            await AsyncStorage.removeItem('@auth_user');
+          }
+        } catch (error) {
+          console.error('Erro ao recuperar estado do usuário:', error);
+          setUser(null);
+        }
+      } else {
+        // Not logged in
+        setUser(null);
+        await AsyncStorage.removeItem('@auth_user');
+      }
+
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const checkAuthState = async () => {
+    // Deprecated: auth state is managed by Firebase listener now.
     try {
       const userData = await AsyncStorage.getItem('@auth_user');
       if (userData) {
@@ -34,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(parsedUser);
       }
     } catch (error) {
-      console.error('Erro ao verificar autenticação:', error);
+      console.error('Erro ao verificar autenticação (fallback):', error);
     } finally {
       setLoading(false);
     }
@@ -58,6 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
+
+    router.replace('/signin');
   };
 
   return (
@@ -72,5 +115,6 @@ export const useAuth = () => {
   if (!context) {
     throw new Error('useAuth deve ser usado dentro de AuthProvider');
   }
+
   return context;
 };
