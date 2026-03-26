@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     pedidoFooter: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 10,
         borderTopWidth: 1,
@@ -148,10 +148,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         fontFamily: 'Inter-Bold',
+        textAlign: 'right',
     },
     statusButtons: {
         flexDirection: 'row',
-        gap: 8,
+        gap: 8
     },
     statusButton: {
         flexDirection: 'row',
