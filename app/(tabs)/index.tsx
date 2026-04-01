@@ -8,6 +8,7 @@ import {
   TextInput,
   Alert,
   Modal,
+  Platform
 } from 'react-native';
 import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2, SquarePen } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
@@ -198,36 +199,41 @@ export default function PedidosScreen() {
   };
 
   const cancelarPedido = async (pedido: Pedido) => {
-    Alert.alert(
-      'Cancelar pedido',
-      `Deseja cancelar o pedido #${pedido.numero}? Os itens serão devolvidos ao estoque.`,
-      [
-        { text: 'Voltar', style: 'cancel' },
-        {
-          text: 'Cancelar pedido',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // 1. Atualiza status no backend
-              await PedidoService.atualizarStatus(pedido.id, 'cancelado');
+    const confirmar = () =>
+      new Promise<boolean>((resolve) => {
+        if (Platform.OS === 'web') {
+          const ok = window.confirm(
+            `Deseja cancelar o pedido #${pedido.numero}? Os itens serão devolvidos ao estoque.`
+          );
+          resolve(ok);
+        } else {
+          Alert.alert(
+            'Cancelar pedido',
+            `Deseja cancelar o pedido #${pedido.numero}? Os itens serão devolvidos ao estoque.`,
+            [
+              { text: 'Voltar', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Cancelar pedido', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        }
+      });
 
-              // 2. Devolve TODOS os itens ao estoque
-              for (const item of pedido.itens) {
-                await EstoqueService.atualizarEstoque(item.produto.id, +item.quantidade);
-              }
+    const confirmado = await confirmar();
+    if (!confirmado) return;
 
-              // 3. Atualiza estado local (ou remove da lista)
-              setPedidos(prev => prev.filter(p => p.id !== pedido.id));
+    try {
+      await PedidoService.atualizarStatus(pedido.id, 'cancelado');
 
-              Alert.alert('Sucesso', 'Pedido cancelado e estoque restaurado.');
-            } catch (error) {
-              console.error('Erro ao cancelar pedido:', error);
-              Alert.alert('Erro', 'Falha ao cancelar o pedido.');
-            }
-          },
-        },
-      ]
-    );
+      for (const item of pedido.itens) {
+        await EstoqueService.atualizarEstoque(item.produto.id, +item.quantidade);
+      }
+
+      setPedidos(prev => prev.filter(p => p.id !== pedido.id));
+      Alert.alert('Sucesso', 'Pedido cancelado e estoque restaurado.');
+    } catch (error) {
+      console.error('Erro ao cancelar pedido:', error);
+      Alert.alert('Erro', 'Falha ao cancelar o pedido.');
+    }
   };
 
   const podeAlterarStatus = (pedido: Pedido, novoStatus: string) => {
