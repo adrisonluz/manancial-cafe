@@ -11,6 +11,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+
+const showAlert = (title: string, message: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(`${title}: ${message}`);
+  } else {
+    Alert.alert(title, message);
+  }
+};
 import { router } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,7 +32,7 @@ export default function SignInScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Erro', 'Preencha todos os campos');
+      showAlert('Erro', 'Preencha todos os campos');
       return;
     }
 
@@ -34,7 +42,7 @@ export default function SignInScreen() {
       router.replace('/(tabs)');
     } catch (error) {
       console.error('Erro no login:', error);
-      Alert.alert('Erro', 'Email ou senha inválidos');
+      showAlert('Erro', 'Email ou senha inválidos');
     } finally {
       setLoading(false);
     }

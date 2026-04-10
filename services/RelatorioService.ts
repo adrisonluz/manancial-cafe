@@ -25,6 +25,7 @@ export interface RelatorioFinanceiro {
     categoria: string;
   }>;
   vendas: Array<{
+    id?: string;
     data: string;
     pedido: number;
     total: number;
@@ -105,7 +106,7 @@ export class RelatorioService {
           totalSaidas,
           saldoLiquido,
           ticketMedio,
-          quantidadePedidos: pedidos.length,
+          quantidadePedidos: pedidosFiltrados.length,
         },
         movimentacoes: movimentacoes.map(m => ({
           data: m.createdAt,
@@ -115,6 +116,7 @@ export class RelatorioService {
           categoria: m.categoria,
         })),
         vendas: pedidosFiltrados.map(p => ({
+          id: p.id,
           data: p.createdAt,
           pedido: p.numero,
           total: p.total,
