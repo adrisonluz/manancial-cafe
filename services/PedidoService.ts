@@ -20,7 +20,7 @@ export interface Pedido {
   numero: number;
   itens: ItemPedido[];
   total: number;
-  status: 'pendente' | 'em haver' | 'pago';
+  status: 'pendente' | 'em haver' | 'pago' | 'cancelado';
   cliente?: string;
   createdAt: string;
   criadoPor: string;
@@ -100,6 +100,24 @@ export class PedidoService {
     } catch (error) {
       console.error('Erro ao buscar pedidos por período:', error);
       return [];
+    }
+  }
+
+  static async atualizarPedido(
+    pedidoId: string,
+    dados: { itens: ItemPedido[]; total: number; cliente?: string }
+  ): Promise<void> {
+    try {
+      const pedidoRef = ref(database, `pedidos/${pedidoId}`);
+      await update(pedidoRef, {
+        itens: dados.itens,
+        total: dados.total,
+        cliente: dados.cliente ?? '',
+        editadoEm: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar pedido:', error);
+      throw error;
     }
   }
 }

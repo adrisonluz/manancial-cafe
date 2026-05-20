@@ -108,28 +108,17 @@ export default function TabLayout() {
               />
             )
         }
-
-        { 
-          user?.role === "admin" 
-          ? (<Tabs.Screen
-                key="clientes"
-                name="clientes"
-                options={{
-                  title: "Clientes",
-                  tabBarIcon: ({ size, color }) => (  
-                    <Contact size={size} color={color} />
-                  ),
-                }}
-              />) 
-            : (
-              <Tabs.Screen
-                name="clientes"
-                options={{
-                  href: null
-                }}
-              />
-            )
-        }
+         
+        <Tabs.Screen
+          key="clientes"
+          name="clientes"
+          options={{
+            title: "Clientes",
+            tabBarIcon: ({ size, color }) => (  
+              <Contact size={size} color={color} />
+            ),
+          }}
+        />
 
         { 
           user?.role === "admin" 

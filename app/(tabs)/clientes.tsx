@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   TextInput,
@@ -14,7 +13,8 @@ import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2,
 import { useAuth } from '@/hooks/useAuth';
 import { ClienteService } from '@/services/ClienteService';
 import { PhoneOutgoing } from 'lucide-react-native';
-import { styles } from '../styles';
+import { styles as stylesOriginal } from '../styles';
+const styles: any = stylesOriginal;
 
 interface Cliente {
   id: string;
@@ -142,7 +142,7 @@ export default function ClientesScreen() {
               </View>
             </View>
 
-            <View style={styles.pedidoFooter}>
+            <View style={[styles.pedidoFooter, { justifyContent: 'space-between' }]}>
               <Text style={styles.pedidoTotal}>{cliente.telefone}</Text>
               <View style={styles.statusButtons}>
                 <TouchableOpacity
