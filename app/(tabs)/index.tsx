@@ -54,6 +54,8 @@ export default function PedidosScreen() {
   const [clienteModalVisible, setClienteModalVisible] = useState(false);
   const [selectedClienteId, setSelectedClienteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clienteSearch, setClienteSearch] = useState('');
+  const [produtoSearch, setProdutoSearch] = useState('');
 
   useEffect(() => {
     loadData();
@@ -343,7 +345,7 @@ export default function PedidosScreen() {
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Novo Pedido</Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <TouchableOpacity onPress={() => { setModalVisible(false); setProdutoSearch(''); }}>
               <X size={24} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -362,13 +364,26 @@ export default function PedidosScreen() {
             <View style={styles.modalContainer}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Selecionar Cliente</Text>
-                <TouchableOpacity onPress={() => setClienteModalVisible(false)}>
+                <TouchableOpacity onPress={() => { setClienteModalVisible(false); setClienteSearch(''); }}>
                   <X size={24} color="#fff" />
                 </TouchableOpacity>
               </View>
 
+              <View style={{ padding: 16, paddingBottom: 0 }}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Buscar cliente..."
+                  placeholderTextColor="#666"
+                  value={clienteSearch}
+                  onChangeText={setClienteSearch}
+                />
+              </View>
+
               <ScrollView style={{ padding: 16 }}>
-                {clientes.map((c) => (
+                {clientes.filter(c =>
+                  c.nome.toLowerCase().includes(clienteSearch.toLowerCase()) ||
+                  c.telefone.includes(clienteSearch)
+                ).map((c) => (
                   <TouchableOpacity
                     key={c.id}
                     style={styles.clienteItem}
@@ -386,10 +401,10 @@ export default function PedidosScreen() {
                 <TouchableOpacity
                   style={[styles.produtoItem, { marginTop: 12, backgroundColor: '#2d2d2d' }]}
                   onPress={() => {
-                    // Nenhum cliente selecionado
                     setClienteNome('');
                     setSelectedClienteId(null);
                     setClienteModalVisible(false);
+                    setClienteSearch('');
                   }}
                 >
                   <Text style={{ color: '#fff' }}>Nenhum cliente</Text>
@@ -398,9 +413,21 @@ export default function PedidosScreen() {
             </View>
           </Modal>
 
+          <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
+            <TextInput
+              style={styles.input}
+              placeholder="Buscar produto..."
+              placeholderTextColor="#666"
+              value={produtoSearch}
+              onChangeText={setProdutoSearch}
+            />
+          </View>
+
           <ScrollView style={styles.produtosList}>
             <Text style={styles.sectionTitle}>Produtos</Text>
-            {produtos.map((produto) => (
+            {produtos.filter(p =>
+              p.nome.toLowerCase().includes(produtoSearch.toLowerCase())
+            ).map((produto) => (
               <TouchableOpacity
                 key={produto.id}
                 style={styles.produtoItem}

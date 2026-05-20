@@ -10,7 +10,6 @@ import {
   Modal,
   Linking 
 } from 'react-native';
-import { Button } from 'react-native-elements';
 import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2, ChefHat, Truck } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { ClienteService } from '@/services/ClienteService';
@@ -146,17 +145,12 @@ export default function ClientesScreen() {
             <View style={styles.pedidoFooter}>
               <Text style={styles.pedidoTotal}>{cliente.telefone}</Text>
               <View style={styles.statusButtons}>
-                <Button 
+                <TouchableOpacity
                   style={styles.statusButton}
-                  color="#51CE70"
-                  icon={
-                    <PhoneOutgoing
-                      size={15}
-                      color="white"
-                    />
-                  }
                   onPress={() => openWhatsApp(cliente.telefone)}
-                />
+                >
+                  <PhoneOutgoing size={15} color="white" />
+                </TouchableOpacity>
               </View>
             </View>
           </View>
