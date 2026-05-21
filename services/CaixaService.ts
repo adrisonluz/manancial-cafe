@@ -179,8 +179,13 @@ export class CaixaService {
 
   static async getSessoesPorPeriodo(dataInicio: Date, dataFim: Date): Promise<SessaoCaixa[]> {
     try {
-      const inicioISO = dataInicio.toISOString();
-      const fimISO = dataFim.toISOString();
+      const inicio = new Date(dataInicio);
+      inicio.setHours(0, 0, 0, 0);
+      const inicioISO = inicio.toISOString();
+
+      const fim = new Date(dataFim);
+      fim.setHours(23, 59, 59, 999);
+      const fimISO = fim.toISOString();
       
       const sessoesRef = ref(database, 'sessoesCaixa');
       const sessoesQuery = query(

@@ -79,8 +79,13 @@ export class PedidoService {
 
   static async getPedidosPorPeriodo(dataInicio: Date, dataFim: Date): Promise<Pedido[]> {
     try {
-      const inicioISO = dataInicio.toISOString();
-      const fimISO = dataFim.toISOString();
+      const inicio = new Date(dataInicio);
+      inicio.setHours(0, 0, 0, 0);
+      const inicioISO = inicio.toISOString();
+
+      const fim = new Date(dataFim);
+      fim.setHours(23, 59, 59, 999);
+      const fimISO = fim.toISOString();
       
       const pedidosRef = ref(database, 'pedidos');
       const pedidosQuery = query(

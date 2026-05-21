@@ -581,6 +581,60 @@ export default function RelatoriosScreen() {
           </View>
 
           <View style={{ padding: 16 }}>
+            {/* Atalhos de período */}
+            <Text style={[styles.inputLabel, { marginBottom: 8 }]}>Período rápido</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              {[
+                {
+                  label: 'Últimos 7 dias',
+                  onPress: () => {
+                    const hoje = new Date();
+                    const inicio = new Date();
+                    inicio.setDate(hoje.getDate() - 6);
+                    setDataInicio(inicio);
+                    setDataFim(hoje);
+                  },
+                },
+                {
+                  label: 'Últimos 30 dias',
+                  onPress: () => {
+                    const hoje = new Date();
+                    const inicio = new Date();
+                    inicio.setDate(hoje.getDate() - 29);
+                    setDataInicio(inicio);
+                    setDataFim(hoje);
+                  },
+                },
+                {
+                  label: 'Mês atual',
+                  onPress: () => {
+                    const hoje = new Date();
+                    const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    setDataInicio(inicio);
+                    setDataFim(hoje);
+                  },
+                },
+                {
+                  label: 'Mês anterior',
+                  onPress: () => {
+                    const hoje = new Date();
+                    const inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+                    const fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+                    setDataInicio(inicio);
+                    setDataFim(fim);
+                  },
+                },
+              ].map(({ label, onPress }) => (
+                <TouchableOpacity
+                  key={label}
+                  style={[styles.categoriaButton, { paddingVertical: 8 }]}
+                  onPress={onPress}
+                >
+                  <Text style={styles.categoriaButtonText}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
             {/* Data Início */}
             {Platform.OS === 'web' ? (
               <View style={[styles.input, { justifyContent: 'center' }]}>
