@@ -125,4 +125,17 @@ export class PedidoService {
       throw error;
     }
   }
+
+  static async getPedidoById(pedidoId: string): Promise<Pedido | null> {
+    try {
+      const pedidoRef = ref(database, `pedidos/${pedidoId}`);
+      const snapshot = await get(pedidoRef);
+      const data = snapshot.val();
+      if (!data) return null;
+      return { id: pedidoId, ...data } as Pedido;
+    } catch (error) {
+      console.error('Erro ao buscar pedido por id:', error);
+      return null;
+    }
+  }
 }

@@ -13,7 +13,7 @@ import { Filter, Calendar, Users, DollarSign, ChartBar as BarChart, X, CheckSqua
 import { ClienteService, Cliente } from '@/services/ClienteService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RelatorioService } from '@/services/RelatorioService';
-import { PedidoService } from '@/services/PedidoService';
+import { PedidoService, Pedido as PedidoType } from '@/services/PedidoService';
 import { styles as stylesOriginal } from '../styles';
 const styles: any = stylesOriginal;
 
@@ -102,6 +102,8 @@ export default function RelatoriosScreen() {
   const [novoStatusEmLote, setNovoStatusEmLote] = useState<'pendente' | 'em haver' | 'pago' | ''>('');
   const [statusEmLoteDropdownOpen, setStatusEmLoteDropdownOpen] = useState(false);
   const [loadingAlterarStatus, setLoadingAlterarStatus] = useState(false);
+  const [detalhesModalVisible, setDetalhesModalVisible] = useState(false);
+  const [pedidoSelecionadoDetalhes, setPedidoSelecionadoDetalhes] = useState<PedidoType | null>(null);
 
   useEffect(() => {
     const dataInicialPadrao = new Date();
@@ -420,8 +422,24 @@ export default function RelatoriosScreen() {
                   ]}
                   onPress={() => {
                     if (modoAlterarStatus && venda.id) togglePedidoSelecionado(venda.id);
+                    else if (venda.id) {
+                      (async () => {
+                        try {
+                          const pedido = await PedidoService.getPedidoById(venda.id as string);
+                          if (pedido) {
+                            setPedidoSelecionadoDetalhes(pedido);
+                            setDetalhesModalVisible(true);
+                          } else {
+                            if (Platform.OS === 'web') window.alert('Detalhes do pedido não encontrados.');
+                            else Alert.alert('Erro', 'Detalhes do pedido não encontrados.');
+                          }
+                        } catch (err) {
+                          console.error('Erro ao obter detalhes do pedido:', err);
+                        }
+                      })();
+                    }
                   }}
-                  activeOpacity={modoAlterarStatus ? 0.7 : 1}
+                  activeOpacity={0.9}
                 >
                   <View style={[styles.vendaHeader, { alignItems: 'flex-start' }]}>
                     {modoAlterarStatus && (
@@ -454,6 +472,45 @@ export default function RelatoriosScreen() {
                   </View>
                 </TouchableOpacity>
               ))}
+
+              <Modal visible={detalhesModalVisible} animationType="slide" presentationStyle="pageSheet">
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>
+                      {pedidoSelecionadoDetalhes ? (pedidoSelecionadoDetalhes.cliente || `Pedido #${pedidoSelecionadoDetalhes.numero}`) : 'Detalhes'}
+                    </Text>
+                    <TouchableOpacity onPress={() => { setDetalhesModalVisible(false); setPedidoSelecionadoDetalhes(null); }}>
+                      <X size={24} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={{ padding: 16, flex: 1 }}>
+                    {pedidoSelecionadoDetalhes ? (
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.vendaDetalhes, { marginBottom: 8 }]}>Data: {new Date(pedidoSelecionadoDetalhes.createdAt).toLocaleDateString('pt-BR')}</Text>
+                        <Text style={[styles.vendaDetalhes, { marginBottom: 8 }]}>Status: {pedidoSelecionadoDetalhes.status}</Text>
+
+                        <ScrollView style={{ flex: 1, marginBottom: 12 }}>
+                          {pedidoSelecionadoDetalhes.itens.map((item, idx) => (
+                            <View key={idx} style={{ padding: 10, backgroundColor: '#0f0f0f', borderRadius: 8, marginBottom: 8 }}>
+                              <Text style={{ color: '#fff', fontFamily: 'Inter-Bold' }}>{item.produto.nome}</Text>
+                              <Text style={{ color: '#ddd', marginTop: 4 }}>{item.quantidade} x R$ {item.produto.preco.toFixed(2).replace('.', ',')}</Text>
+                              <Text style={{ color: '#9f795c', marginTop: 6 }}>Subtotal: R$ {(item.produto.preco * item.quantidade).toFixed(2).replace('.', ',')}</Text>
+                              {item.observacoes ? <Text style={{ color: '#ccc', marginTop: 6 }}>Obs: {item.observacoes}</Text> : null}
+                            </View>
+                          ))}
+                        </ScrollView>
+
+                        <View style={{ paddingTop: 8 }}>
+                          <Text style={[styles.vendaTotal, { textAlign: 'right' }]}>Total: R$ {pedidoSelecionadoDetalhes.total.toFixed(2).replace('.', ',')}</Text>
+                        </View>
+                      </View>
+                    ) : (
+                      <Text style={styles.vendaDetalhes}>Carregando...</Text>
+                    )}
+                  </View>
+                </View>
+              </Modal>
 
               {modoAlterarStatus && (
                 <View style={{ marginTop: 16, padding: 12, backgroundColor: '#111', borderRadius: 12 }}>
