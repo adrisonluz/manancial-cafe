@@ -9,8 +9,9 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import { Plus, CreditCard as Edit, Trash2, Search, TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { Plus, Pencil as Edit, Trash2, Search, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 import { EstoqueService } from '@/services/EstoqueService';
+import { formatCurrency, formatCurrencyValue, maskCurrencyInput, parseCurrencyInput } from '@/utils/currency';
 import { styles } from '../styles';
 
 interface Produto {
@@ -71,7 +72,7 @@ export default function EstoqueScreen() {
       setFormData({
         nome: produto.nome,
         categoria: produto.categoria,
-        preco: produto.preco.toString(),
+        preco: formatCurrencyValue(produto.preco),
         quantidade: produto.quantidade.toString(),
         estoqueMinimo: produto.estoqueMinimo.toString(),
         unidade: produto.unidade,
@@ -104,7 +105,7 @@ export default function EstoqueScreen() {
     const dadosProduto = {
       nome: formData.nome,
       categoria: formData.categoria || 'Geral',
-      preco: parseFloat(formData.preco),
+      preco: parseCurrencyInput(formData.preco),
       quantidade: parseFloat(formData.quantidade) || 0,
       estoqueMinimo: parseFloat(formData.estoqueMinimo) || 0,
       unidade: formData.unidade,
@@ -245,7 +246,7 @@ export default function EstoqueScreen() {
             <View style={styles.produtoDetalhes}>
               <View style={styles.detalheItem}>
                 <Text style={styles.detalheLabel}>Preço:</Text>
-                <Text style={styles.detalheValor}>R$ {produto.preco.toFixed(2)}</Text>
+                <Text style={styles.detalheValor}>{formatCurrency(produto.preco)}</Text>
               </View>
               
               <TouchableOpacity
@@ -312,8 +313,8 @@ export default function EstoqueScreen() {
                 <TextInput
                   style={styles.input}
                   value={formData.preco}
-                  onChangeText={(text) => setFormData(prev => ({...prev, preco: text}))}
-                  placeholder="0.00"
+                  onChangeText={(text) => setFormData(prev => ({...prev, preco: maskCurrencyInput(text)}))}
+                  placeholder="0,00"
                   placeholderTextColor="#666"
                   keyboardType="numeric"
                 />

@@ -10,7 +10,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
-import { Users, Settings, Database, Download, Upload, Shield, X, Plus, CreditCard as Edit, Trash2 } from 'lucide-react-native';
+import { Users, Settings, Database, Download, Upload, Shield, X, Plus, Pencil as Edit, Trash2 } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { AdminService } from '@/services/AdminService';
 import { styles } from '../styles';

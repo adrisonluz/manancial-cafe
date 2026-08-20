@@ -14,6 +14,7 @@ import { ClienteService, Cliente } from '@/services/ClienteService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RelatorioService } from '@/services/RelatorioService';
 import { PedidoService, Pedido as PedidoType } from '@/services/PedidoService';
+import { formatCurrency } from '@/utils/currency';
 import { styles as stylesOriginal } from '../styles';
 const styles: any = stylesOriginal;
 
@@ -242,7 +243,6 @@ export default function RelatoriosScreen() {
     }
   };
 
-  const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`;
   const formatDate = (date: Date) => date.toLocaleDateString('pt-BR');
 
   const getStatusColor = (status?: string) => {
@@ -494,15 +494,15 @@ export default function RelatoriosScreen() {
                           {pedidoSelecionadoDetalhes.itens.map((item, idx) => (
                             <View key={idx} style={{ padding: 10, backgroundColor: '#0f0f0f', borderRadius: 8, marginBottom: 8 }}>
                               <Text style={{ color: '#fff', fontFamily: 'Inter-Bold' }}>{item.produto.nome}</Text>
-                              <Text style={{ color: '#ddd', marginTop: 4 }}>{item.quantidade} x R$ {item.produto.preco.toFixed(2).replace('.', ',')}</Text>
-                              <Text style={{ color: '#9f795c', marginTop: 6 }}>Subtotal: R$ {(item.produto.preco * item.quantidade).toFixed(2).replace('.', ',')}</Text>
+                              <Text style={{ color: '#ddd', marginTop: 4 }}>{item.quantidade} x {formatCurrency(item.produto.preco)}</Text>
+                              <Text style={{ color: '#9f795c', marginTop: 6 }}>Subtotal: {formatCurrency(item.produto.preco * item.quantidade)}</Text>
                               {item.observacoes ? <Text style={{ color: '#ccc', marginTop: 6 }}>Obs: {item.observacoes}</Text> : null}
                             </View>
                           ))}
                         </ScrollView>
 
                         <View style={{ paddingTop: 8 }}>
-                          <Text style={[styles.vendaTotal, { textAlign: 'right' }]}>Total: R$ {pedidoSelecionadoDetalhes.total.toFixed(2).replace('.', ',')}</Text>
+                          <Text style={[styles.vendaTotal, { textAlign: 'right' }]}>Total: {formatCurrency(pedidoSelecionadoDetalhes.total)}</Text>
                         </View>
                       </View>
                     ) : (

@@ -9,7 +9,7 @@ import {
   Modal,
   Linking 
 } from 'react-native';
-import { Plus, Clock, CircleCheck as CheckCircle, X, CreditCard as Edit, Trash2, ChefHat, Truck } from 'lucide-react-native';
+import { Plus, Clock, CircleCheck as CheckCircle, X, Trash2, ChefHat, Truck } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { ClienteService } from '@/services/ClienteService';
 import { PhoneOutgoing } from 'lucide-react-native';

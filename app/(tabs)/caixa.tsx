@@ -12,6 +12,7 @@ import {
 import { DollarSign, Plus, Minus, Clock, CircleCheck as CheckCircle, X, Eye, Calendar } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { CaixaService } from '@/services/CaixaService';
+import { formatCurrency, maskCurrencyInput, parseCurrencyInput } from '@/utils/currency';
 import { styles } from '../styles';
 
 interface MovimentoCaixa {
@@ -73,14 +74,14 @@ export default function CaixaScreen() {
   };
 
   const abrirCaixa = async () => {
-    if (!valorAbertura || parseFloat(valorAbertura) < 0) {
+    if (!valorAbertura || parseCurrencyInput(valorAbertura) < 0) {
       Alert.alert('Erro', 'Informe um valor válido para abertura do caixa');
       return;
     }
 
     try {
       const novaSessao = await CaixaService.abrirCaixa(
-        parseFloat(valorAbertura),
+        parseCurrencyInput(valorAbertura),
         user?.email || ''
       );
       setSessaoAtual(novaSessao);
@@ -98,7 +99,7 @@ export default function CaixaScreen() {
       return;
     }
 
-    const valorInformado = parseFloat(valorFechamento);
+    const valorInformado = parseCurrencyInput(valorFechamento);
     const valorCalculado = calcularSaldoAtual();
 
     try {
@@ -123,7 +124,7 @@ export default function CaixaScreen() {
       if (Math.abs(diferenca) > 0.01) {
         Alert.alert(
           'Divergência no Caixa',
-          `Diferença de R$ ${diferenca.toFixed(2)}\nCalculado: R$ ${valorCalculado.toFixed(2)}\nInformado: R$ ${valorInformado.toFixed(2)}`
+          `Diferença de ${formatCurrency(diferenca)}\nCalculado: ${formatCurrency(valorCalculado)}\nInformado: ${formatCurrency(valorInformado)}`
         );
       } else {
         Alert.alert('Sucesso', 'Caixa fechado com sucesso!');
@@ -145,7 +146,7 @@ export default function CaixaScreen() {
         sessaoId: sessaoAtual.id,
         tipo: formMovimento.tipo,
         categoria: formMovimento.categoria,
-        valor: parseFloat(formMovimento.valor),
+        valor: parseCurrencyInput(formMovimento.valor),
         descricao: formMovimento.descricao,
         criadoPor: user?.email || '',
       });
@@ -180,10 +181,6 @@ export default function CaixaScreen() {
     return sessaoAtual.valorAbertura + totalEntradas - totalSaidas;
   };
 
-  const formatCurrency = (value: number) => {
-    return `R$ ${value.toFixed(2).replace('.', ',')}`;
-  };
-
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('pt-BR', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' });
@@ -209,7 +206,7 @@ export default function CaixaScreen() {
               placeholder="Valor inicial (R$)"
               placeholderTextColor="#666"
               value={valorAbertura}
-              onChangeText={setValorAbertura}
+              onChangeText={(text) => setValorAbertura(maskCurrencyInput(text))}
               keyboardType="numeric"
             />
             
@@ -367,7 +364,7 @@ export default function CaixaScreen() {
                 placeholder="0,00"
                 placeholderTextColor="#666"
                 value={formMovimento.valor}
-                onChangeText={(text) => setFormMovimento(prev => ({...prev, valor: text}))}
+                onChangeText={(text) => setFormMovimento(prev => ({...prev, valor: maskCurrencyInput(text)}))}
                 keyboardType="numeric"
               />
             </View>
@@ -415,7 +412,7 @@ export default function CaixaScreen() {
                 placeholder="0,00"
                 placeholderTextColor="#666"
                 value={valorFechamento}
-                onChangeText={setValorFechamento}
+                onChangeText={(text) => setValorFechamento(maskCurrencyInput(text))}
                 keyboardType="numeric"
               />
             </View>

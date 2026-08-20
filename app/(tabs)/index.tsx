@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ClienteService, Cliente } from '@/services/ClienteService';
 import { PedidoService } from '@/services/PedidoService';
 import { EstoqueService } from '@/services/EstoqueService';
+import { formatCurrency } from '@/utils/currency';
 import { styles as stylesOriginal } from '../styles';
 // Force styles to any to avoid cross-platform type issues between web/native style shapes
 const styles: any = stylesOriginal;
@@ -417,11 +418,11 @@ export default function PedidosScreen() {
             <View style={styles.pedidoItens}>
               {pedido.itens.map((item, index) => (
                 <Text key={index} style={styles.itemText}>
-                  {item.quantidade}x {item.produto.nome} - R$ {(item.produto.preco * item.quantidade).toFixed(2)}
+                  {item.quantidade}x {item.produto.nome} - {formatCurrency(item.produto.preco * item.quantidade)}
                 </Text>
               ))}
 
-              <Text style={styles.pedidoTotal}>Total: R$ {pedido.total.toFixed(2)}</Text>
+              <Text style={styles.pedidoTotal}>Total: {formatCurrency(pedido.total)}</Text>
             </View>
 
             <View style={styles.pedidoFooter}>
@@ -576,7 +577,7 @@ export default function PedidosScreen() {
                 onPress={() => adicionarItem(produto)}
               >
                 <Text style={styles.produtoNome}>{produto.nome}</Text>
-                <Text style={styles.produtoPreco}>R$ {produto.preco.toFixed(2)}</Text>
+                <Text style={styles.produtoPreco}>{formatCurrency(produto.preco)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -597,7 +598,7 @@ export default function PedidosScreen() {
               
               <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>
-                  Total: R$ {pedidoAtual.reduce((sum, item) => sum + (item.produto.preco * item.quantidade), 0).toFixed(2)}
+                  Total: {formatCurrency(pedidoAtual.reduce((sum, item) => sum + (item.produto.preco * item.quantidade), 0))}
                 </Text>
               </View>
 
@@ -655,7 +656,7 @@ export default function PedidosScreen() {
                 }}
               >
                 <Text style={styles.produtoNome}>{produto.nome}</Text>
-                <Text style={styles.produtoPreco}>R$ {produto.preco.toFixed(2)}</Text>
+                <Text style={styles.produtoPreco}>{formatCurrency(produto.preco)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -679,7 +680,7 @@ export default function PedidosScreen() {
 
               <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>
-                  Total: R$ {itensEditados.reduce((sum, item) => sum + (item.produto.preco * item.quantidade), 0).toFixed(2)}
+                  Total: {formatCurrency(itensEditados.reduce((sum, item) => sum + (item.produto.preco * item.quantidade), 0))}
                 </Text>
               </View>
 
